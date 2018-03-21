@@ -18,11 +18,21 @@ namespace ArrangeWindows
 
         private static void Run(Options options)
         {
-            var processes = Process.GetProcesses().Where(p => options.WindowTitles.Contains(p.MainWindowTitle)).ToArray();
+            // Find processes that have the listed titles.
+            var matchingProcesses = Process.GetProcesses()
+                .Where(p => options.WindowTitles.Contains(p.MainWindowTitle))
+                .ToArray();
+
+            // Order the found procesess by the original title order.
+            var processes = options.WindowTitles
+                .Select(t => matchingProcesses.FirstOrDefault(p => p.MainWindowTitle == t))
+                .Where(p => p != null)
+                .ToArray();
+
             var display = Screen.AllScreens[options.DisplayIndex].WorkingArea;
 
             var screenIsLandscape = display.Width > display.Height;
-            var square = Math.Sqrt(processes.Length);
+            var square = Math.Sqrt(processes.Length % 2 == 0 ? processes.Length : processes.Length + 1);
             var floor = (int)Math.Floor(square);
             var ceiling = (int)Math.Ceiling(square);
             var columns = screenIsLandscape ? ceiling : floor;
@@ -62,6 +72,7 @@ namespace ArrangeWindows
         private static void HandleErrors(IEnumerable<Error> errors)
         {
             // TODO.
+
         }
     }
 }
