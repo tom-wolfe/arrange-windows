@@ -29,6 +29,8 @@ namespace ArrangeWindows
                 .Where(p => p != null)
                 .ToArray();
 
+            if (processes.Length == 0) { return; }
+
             var display = Screen.AllScreens[options.DisplayIndex].WorkingArea;
 
             var screenIsLandscape = display.Width > display.Height;
